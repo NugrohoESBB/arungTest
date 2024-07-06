@@ -29,19 +29,17 @@ float averageVoltage = 0, tdsValue = 0, temperature = 25;
 #define relayPoAirPin D4 // IN2
 #define relayPoABmPin D3 // IN3
 #define relayPoACPin  D2 // IN4
-#define ledPin        D13
+#define ledPin        D5
 
 // Variable Public
-int ppmValue;
+int ppmValue, btnValue;
 
 BLYNK_WRITE(V4) {
   ppmValue = param.asInt();
-  Serial.println("value slider: ", ppmValue);
 }
 
 BLYNK_WRITE(V5) {
-  int btnValue = param.asInt();
-  Serial.println("value button: ", btnValue);
+  btnValue = param.asInt();
   digitalWrite(BTN1,btnValue);  
 }
 
@@ -51,8 +49,8 @@ void setup() {
   Serial.begin(115200);
   Blynk.begin(auth, ssid, pass);
   
-  lcd.init();
-  //lcd.begin();
+  //lcd.init();
+  lcd.begin();
   lcd.backlight();
 
   // Input output initialization
@@ -64,7 +62,7 @@ void setup() {
   pinMode(ledPin, OUTPUT);
   pinMode(BTN1, OUTPUT);
 
-  digitalWrite(ledPin, HIGH)
+  digitalWrite(ledPin, HIGH);
   
   // Relay Low
   digitalWrite(relayDCPin, HIGH);
@@ -93,6 +91,9 @@ void setup() {
 
 void loop() {
   Blynk.run();
+
+  Serial.println("value button: ", btnValue);
+  Serial.println("value slider: ", ppmValue);
 
   /*if (btnValue == 1) {
     digitalWrite(relayDCPin, LOW);
@@ -157,26 +158,26 @@ int getMedianNum(int bArray[], int iFilterLen) {
   return bTemp;
 }
 
-void componentCheck() {
-  lcd1.setCursor(3, 0);
-  lcd1.print("Component State");
+/*void componentCheck() {
+  lcd.setCursor(3, 0);
+  lcd.print("Component State");
   
   int flowSensorValue = digitalRead(flowSensorPin);
   int waterLevelSensorValue = digitalRead(waterLevelSensorPin);
   
   if (flowSensorValue == HIGH) {
-    lcd1.setCursor(0, 1);
-    lcd1.print("Flow Sensor: OK  ");
+    lcd.setCursor(0, 1);
+    lcd.print("Flow Sensor: OK  ");
     digitalWrite(ledPin, HIGH);
   } else {
-    lcd1.setCursor(0, 1);
-    lcd1.print("Flow Sensor: LOW");
+    lcd.setCursor(0, 1);
+    lcd.print("Flow Sensor: LOW");
     digitalWrite(ledPin, LOW);
   }
   
   if (waterLevelSensorValue == HIGH) {
-    lcd1.setCursor(0, 2);
-    lcd1.print("Water Level: OK  ");
+    lcd.setCursor(0, 2);
+    lcd.print("Water Level: OK  ");
     digitalWrite(ledPin, HIGH);
   } else {
     lcd1.setCursor(0, 2);
@@ -249,7 +250,7 @@ void resetNutrientValues() {
   lcd2.setCursor(0, 1);
   lcd2.print("dan air direset");
   delay(5000);
-}
+}*/
 
 
 /*LOGIC SKRIPSI PENGADUK NUTRISI
