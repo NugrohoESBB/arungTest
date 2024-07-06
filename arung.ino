@@ -1,21 +1,22 @@
-#include <BlynkSimpleEsp8266.h>
+// #include <BlynkSimpleEsp8266.h>
 #include <LiquidCrystal_I2C.h>
-#include <ESP8266WiFi.h>
+// #include <ESP8266WiFi.h>
+// #include <WiFiClient.h>
 #include <Wire.h>
 
-#define BLYNK_TEMPLATE_ID "TMPL6SZ7Rhbr9"
-#define BLYNK_TEMPLATE_NAME "skripsi pangaduk nutrisi"
-#define BLYNK_AUTH_TOKEN "ImdxpgDYHcBizkkPr1BNKCja4slasaQN"
+// #define BLYNK_TEMPLATE_ID "TMPL6SZ7Rhbr9"
+// #define BLYNK_TEMPLATE_NAME "skripsi pangaduk nutrisi"
+// #define BLYNK_AUTH_TOKEN "sfGESi4-7RQir7GL_5zhWkrxsZ7eFhYk"
 
-char auth[] = BLYNK_AUTH_TOKEN;
-char ssid[] = "UGMURO-INET";
-char pass[] = "Gepuk15000";
-WidgetLCD lcdWL   (V2);
-WidgetLCD lcdTDS  (V3);
+// char auth[] = BLYNK_AUTH_TOKEN;
+// char ssid[] = "UGMURO-INET";
+// char pass[] = "Gepuk15000";
+// WidgetLCD lcdWL(V2);
+// WidgetLCD lcdTDS(V3);
 
 // Configuration TDS Sensor
 #define VREF 5.0
-#define SCOUNT  30
+#define SCOUNT 30
 int analogBuffer[SCOUNT];
 int analogBufferTemp[SCOUNT];
 int analogBufferIndex = 0, copyIndex = 0;
@@ -34,20 +35,20 @@ float averageVoltage = 0, tdsValue = 0, temperature = 25;
 // Variable Public
 int ppmValue, btnValue;
 
-BLYNK_WRITE(V4) {
-  ppmValue = param.asInt();
-}
+// BLYNK_WRITE(V4) {
+//  ppmValue = param.asInt();
+// }
 
-BLYNK_WRITE(V5) {
-  btnValue = param.asInt();
-  digitalWrite(BTN1,btnValue);  
-}
+// BLYNK_WRITE(V5) {
+//  btnValue = param.asInt();
+//  digitalWrite(BTN1,btnValue);  
+// }
 
 LiquidCrystal_I2C lcd(0x26, 20, 4);
 
 void setup() {
   Serial.begin(115200);
-  Blynk.begin(auth, ssid, pass);
+  // Blynk.begin(auth, ssid, pass);
   
   //lcd.init();
   lcd.begin();
@@ -70,15 +71,13 @@ void setup() {
   digitalWrite(relayPoABmPin, HIGH);
   digitalWrite(relayPoACPin, HIGH);
 
-
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, pass);
-  while (WiFi.status() != WL_CONNECTED){
-    delay(500);
-    Serial.print(".");
-    lcd.setCursor(0, 1);
-    lcd.print("   Connecting....   ");
-  }
+  // WiFi.begin(ssid, pass);
+  // while (WiFi.status() != WL_CONNECTED){
+  //   delay(500);
+  //   Serial.print(".");
+  //   lcd.setCursor(0, 1);
+  //   lcd.print("   Connecting....   ");
+  // }
 
   lcd.setCursor(0, 1);
   lcd.print("                    ");
@@ -90,23 +89,47 @@ void setup() {
 }
 
 void loop() {
-  Blynk.run();
-
-  Serial.println("value button: ", btnValue);
-  Serial.println("value slider: ", ppmValue);
-
-  /*if (btnValue == 1) {
-    digitalWrite(relayDCPin, LOW);
-  } else {
-    digitalWrite(relayDCPin, HIGH);
-    digitalWrite(relayPoAirPin, HIGH);
-    digitalWrite(relayPoABmPin, HIGH);
-    digitalWrite(relayPoACPin, HIGH);
-  }
+  // Blynk.run();
+  int waterLevelSensorValue = digitalRead(waterLevelPin);
 
   SensTDS();
 
-  if (tdsValue)*/
+  lcd.setCursor(0, 0);
+  lcd.print("PPM: " + String(tdsValue));
+
+  if (waterLevelSensorValue == HIGH) {
+    lcd.setCursor(0, 1);
+    lcd.print("   Tangki  Penuh    ");
+  } else {
+    lcd.setCursor(0, 1);
+    lcd.print("   Tangki  Kosong   ");
+  }
+
+  // Serial.println("value button: ", btnValue);
+  // Serial.println("value slider: ", ppmValue);
+
+  // if (btnValue == 1) {
+  //   digitalWrite(relayDCPin, LOW);
+  // } else {
+  //   digitalWrite(relayDCPin, HIGH);
+  //   digitalWrite(relayPoAirPin, HIGH);
+  //   digitalWrite(relayPoABmPin, HIGH);
+  //   digitalWrite(relayPoACPin, HIGH);
+  // }
+  ppmValue = 1000;
+
+  if (tdsValue < ppmValue - 50) {
+    digitalWrite(relayPoABmPin, LOW);
+    delay(3000);
+    digitalWrite(relayPoABmPin, HIGH);
+  } else if (tdsValue > ppmValue + 50) {
+    digitalWrite(relayPoAirPin, LOW);
+    delay(3000);
+    digitalWrite(relayPoAirPin, HIGH);
+  } else if (tdsValue >= ppmValue + 50 && tdsValue <= ppmValue - 50) {
+    digitalWrite(relayDCPin, HIGH);
+    digitalWrite(relayPoACPin, LOW);
+  }
 
 }
 
@@ -134,6 +157,9 @@ void SensTDS() {
     lcd.setCursor(0, 1);
     lcd.print("PPM Nutrisi: "); 
     lcd.print(tdsValue,0);
+
+    lcdWL.print(0, 0, "PPM : " + String(tdsValue));
+    lcdTDS.print(0, 0, "PPM : " + String(tdsValue));
   }
 }
 
