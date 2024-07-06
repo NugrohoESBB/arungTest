@@ -158,8 +158,8 @@ void SensTDS() {
     lcd.print("PPM Nutrisi: "); 
     lcd.print(tdsValue,0);
 
-    lcdWL.print(0, 0, "PPM : " + String(tdsValue));
-    lcdTDS.print(0, 0, "PPM : " + String(tdsValue));
+    // lcdWL.print(0, 0, "PPM : " + String(tdsValue));
+    // lcdTDS.print(0, 0, "PPM : " + String(tdsValue));
   }
 }
 
