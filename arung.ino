@@ -64,11 +64,14 @@ void setup() {
   pinMode(ledPin, OUTPUT);
   pinMode(BTN1, OUTPUT);
 
+  digitalWrite(ledPin, HIGH)
+  
   // Relay Low
   digitalWrite(relayDCPin, HIGH);
   digitalWrite(relayPoAirPin, HIGH);
   digitalWrite(relayPoABmPin, HIGH);
   digitalWrite(relayPoACPin, HIGH);
+
 
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, pass);
