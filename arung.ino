@@ -36,6 +36,7 @@ int ppmValue;
 
 BLYNK_WRITE(V4) {
   ppmValue = param.asInt();
+  Serial.println("value slider: ", ppmValue);
 }
 
 BLYNK_WRITE(V5) {
